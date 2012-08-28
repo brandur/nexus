@@ -2,6 +2,8 @@ require "timeout"
 
 module Nexus
   class Consumer
+    include Term::ANSIColor
+
     def initialize(context)
       @context = context
     end
@@ -17,7 +19,8 @@ module Nexus
 
     def find_or_insert_source(name)
       sources = DB[:sources]
-      sources.first(name: name) || sources.insert(name: name)
+      sources.first(name: name) ||
+        sources.insert(name: name) and sources.first(name: name)
     end
 
     def log(opts={})
@@ -28,12 +31,12 @@ module Nexus
       events = []
       @context.sources.each do |source|
         begin
-          Timeout.timeout(10) {
+          Timeout.timeout(10) do
             events += source[:block].call.map do |event|
               event[:source] = find_or_insert_source(source[:name].to_s)
               event
             end
-          }
+          end
         rescue
           Slides.log :error, message: $!.message, backtrace: $!.backtrace
         end
@@ -44,9 +47,10 @@ module Nexus
           DB[:events].insert(tag: event[:tag], title: event[:title],
             url: event[:url], content: event[:content],
             source_id: event[:source][:id], published_at: event[:published_at])
-          log(title: event[:title], url: event[:url],
-            content: sanitize(event[:content]), tag: event[:tag],
-            published_at: event[:published_at], source: event[:source][:name])
+          log(title: bold { cyan { event[:title] } },
+            content: green { sanitize(event[:content]) }, url: event[:url],
+            tag: event[:tag], published_at: event[:published_at],
+            source: event[:source][:name])
         end
       end
     end
