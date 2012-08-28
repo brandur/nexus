@@ -38,6 +38,7 @@ GEM
       nokogiri (> 0.0.0)
     sequel (3.37.0)
     slides (0.1.6)
+    term-ansicolor (1.0.7)
 
 PLATFORMS
   ruby
@@ -49,3 +50,4 @@ DEPENDENCIES
   pg
   sequel
   slides
+  term-ansicolor
