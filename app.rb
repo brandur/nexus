@@ -29,6 +29,17 @@ source :github_heroku do
   end
 end
 
+source :hackernews do
+  feed = Feedzirra::Feed.fetch_and_parse("http://news.ycombinator.com/rss")
+  feed.entries.map do |entry|
+    { title: entry.title, tag: entry.summary.gsub(/^.*id=(\d+).*$/, '\\1'), 
+      # Hacker News doesn't include a published date of any kind ...
+      url: entry.url, published_at: Time.now.utc, metadata: {
+        comments_url: entry.summary.gsub(/^.*"(http:.*)".*$/, '\\1')
+    } }
+  end
+end
+
 source :twitter_brandur do
   tweets = Twitter.home_timeline(include_entities: true)
   tweets.map do |tweet|
