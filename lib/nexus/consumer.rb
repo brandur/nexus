@@ -47,10 +47,10 @@ module Nexus
           DB[:events].insert(tag: event[:tag], title: event[:title],
             url: event[:url], content: event[:content],
             source_id: event[:source][:id], published_at: event[:published_at])
-          log(title: bold { cyan { event[:title] } },
-            content: green { sanitize(event[:content]) }, url: event[:url],
-            tag: event[:tag], published_at: event[:published_at],
-            source: event[:source][:name])
+          log(title: event[:title] ? bold { cyan { event[:title] } } : nil,
+            content: event[:content] ? green { sanitize(event[:content]) } : nil,
+            url: event[:url], tag: event[:tag],
+            published_at: event[:published_at], source: event[:source][:name])
         end
       end
     end
