@@ -10,6 +10,14 @@ Twitter.configure do |config|
 end
 
 #
+# Utilities
+#
+
+def twitter_url(user, status_id)
+  "https://twitter.com/#{user}/status/#{status_id}"
+end
+
+#
 # Sources
 #
 
@@ -22,10 +30,19 @@ source :github_heroku do
 end
 
 source :twitter_brandur do
-  tweets = Twitter.home_timeline
+  tweets = Twitter.home_timeline(include_entities: true)
   tweets.map do |tweet|
+    content = tweet.text
+    # expand urls, because short urls are terrible
+    tweet.urls.each { |url| content.sub!(url.url, url.expanded_url) }
     { content: tweet.text, tag: tweet.id.to_s,
-      url: "https://twitter.com/#{tweet.user.screen_name}/status/#{tweet.id}",
-      published_at: tweet.created_at }
+      url: twitter_url(tweet.user.screen_name, tweet.id),
+      published_at: tweet.created_at, metadata: {
+        in_reply_to_url: tweet.in_reply_to_status_id ?
+          twitter_url(tweet.in_reply_to_screen_name, tweet.in_reply_to_status_id) : nil,
+        in_reply_to_status: tweet.in_reply_to_status_id,
+        in_reply_to_user: tweet.in_reply_to_screen_name,
+        user: tweet.user.screen_name, name: tweet.user.name
+    } }
   end
 end

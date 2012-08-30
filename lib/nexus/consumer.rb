@@ -46,11 +46,13 @@ module Nexus
         unless DB[:events].first(tag: event[:tag])
           DB[:events].insert(tag: event[:tag], title: event[:title],
             url: event[:url], content: event[:content],
-            source_id: event[:source][:id], published_at: event[:published_at])
-          log(title: event[:title] ? bold { cyan { event[:title] } } : nil,
+            source_id: event[:source][:id], published_at: event[:published_at],
+            metadata: event[:metadata] ? event[:metadata].hstore : nil)
+          log({ title: event[:title] ? bold { cyan { event[:title] } } : nil,
             content: event[:content] ? green { sanitize(event[:content]) } : nil,
             url: event[:url], tag: event[:tag],
-            published_at: event[:published_at], source: event[:source][:name])
+            published_at: event[:published_at], source: event[:source][:name] }.
+            merge(event[:metadata] ? event[:metadata] : {}))
         end
       end
     end
