@@ -41,7 +41,7 @@ GEM
       nokogiri (> 0.0.0)
     sequel (3.37.0)
     simple_oauth (0.1.9)
-    slides (0.1.6)
+    slides (0.1.7)
     term-ansicolor (1.0.7)
     twitter (2.2.0)
       activesupport (>= 2.3.9, < 4)
