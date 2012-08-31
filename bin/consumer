@@ -17,5 +17,5 @@ require_relative "../lib/nexus"
 
 # primary instruction set
 $global_context = Nexus::Context.new
-require_relative "../app"
+require_relative "../sources"
 Nexus::Consumer.new($global_context).run
