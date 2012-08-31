@@ -16,6 +16,7 @@ class Event < Sequel::Model
 
   def to_json_v1
     {
+      id: id,
       title: title,
       content: content ? sanitize(content) : nil,
       url: url,
