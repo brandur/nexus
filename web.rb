@@ -11,7 +11,7 @@ helpers do
 
   def authorized?
     authenticate_with_http_basic do |username, password|
-      username == env!("HTTP_API_KEY")
+      password == env!("HTTP_API_KEY")
     end
   end
 
@@ -27,7 +27,7 @@ helpers do
   end
 
   def log(action, attrs = {})
-    Slides.log(action, attrs.merge!(id: request.id))
+    Slides.log(action, attrs.merge!(id: env["REQUEST_ID"]))
   end
 end
 
