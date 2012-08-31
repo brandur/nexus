@@ -49,6 +49,8 @@ end
 
 get "/events" do
   authorized!
-  events = Event.order(:id.desc).limit(params[:count] || 100).map(&:to_json_v1)
-  [200, MultiJson.encode(events, pretty: curl?)]
+  count = (params[:count] || 100).to_i
+  since = (params[:since] || 0).to_i
+  events = Event.order(:id.desc).filter { id >= since }.limit(count)
+  [200, MultiJson.encode(events.map(&:to_json_v1), pretty: curl?)]
 end
