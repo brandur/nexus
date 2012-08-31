@@ -10,6 +10,7 @@ gem "rack"
 gem "rack-instruments"
 gem "rack-ssl"
 gem "sequel", require: ["sequel", "sequel/extensions/pg_hstore"]
+gem "sequel-instruments"
 gem "sinatra"
 gem "slides"
 gem "term-ansicolor"
