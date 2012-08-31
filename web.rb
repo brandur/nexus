@@ -24,6 +24,6 @@ end
 #
 
 get "/events" do
-  events = Event.order(:id.desc).limit(100).map(&:to_json_v1)
+  events = Event.order(:id.desc).limit(params[:count] || 100).map(&:to_json_v1)
   [200, MultiJson.encode(events, pretty: curl?)]
 end
