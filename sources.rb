@@ -85,8 +85,6 @@ source :twitter_brandur do
       metadata: {
         in_reply_to_url: tweet.in_reply_to_status_id ?
           twitter_url(tweet.in_reply_to_screen_name, tweet.in_reply_to_status_id) : nil,
-        in_reply_to_status: tweet.in_reply_to_status_id,
-        in_reply_to_user: tweet.in_reply_to_screen_name,
         user: tweet.user.screen_name
       }.reject { |k,v| v == nil }.hstore)
   end
