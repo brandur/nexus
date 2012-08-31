@@ -1,3 +1,5 @@
+require "time"
+
 class Event < Sequel::Model
   include Term::ANSIColor
 
@@ -10,6 +12,18 @@ class Event < Sequel::Model
       published_at: published_at,
       source: source
     }.merge(metadata ? metadata : {}))
+  end
+
+  def to_json_v1
+    {
+      title: title,
+      content: content ? sanitize(content) : nil,
+      url: url,
+      tag: tag,
+      published_at: published_at.iso8601,
+      source: source,
+      metadata: metadata ? metadata.hash : {}
+    }
   end
 
   private
