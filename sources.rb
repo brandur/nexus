@@ -44,7 +44,7 @@ source :facts do
   end
 end
 
-source :github_heroku do
+source :github do
   feed = Feedzirra::Feed.fetch_and_parse(env!("GITHUB_HEROKU_URL"))
   feed.entries.map do |entry|
     Event.new(
@@ -71,7 +71,7 @@ source :hackernews do
   end
 end
 
-source :twitter_brandur do
+source :twitter do
   tweets = Twitter.home_timeline(include_entities: true)
   tweets.map do |tweet|
     content = tweet.text
