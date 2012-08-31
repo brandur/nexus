@@ -5,11 +5,8 @@ Bundler.require
 # so logging output appears properly
 $stdout.sync = true
 
-def env!(k)
-  ENV[k] || raise("missing_environment=#{k}")
-end
-
-DB = Sequel.connect(env!("DATABASE_URL"))
+DB = Sequel.connect(ENV["DATABASE_URL"] ||
+  raise("missing_environment=DATABASE_URL"))
 
 configure do
   set :show_exceptions, false

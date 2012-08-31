@@ -11,7 +11,8 @@ helpers do
 
   def authorized?
     authenticate_with_http_basic do |username, password|
-      password == env!("HTTP_API_KEY")
+      password == ENV["HTTP_API_KEY"] ||
+        raise("missing_environment=HTTP_API_KEY")
     end
   end
 
