@@ -3,10 +3,6 @@
 require "bundler/setup"
 Bundler.require
 
-require_relative "../lib/nexus"
-
-$global_context = Nexus::Context.new
-
 def env!(k)
   ENV[k] || raise("missing_environment=#{k}")
 end
@@ -15,9 +11,11 @@ def source(name, &block)
   $global_context.source(name, &block)
 end
 
-# primary instruction set
-require_relative "../app"
-
 DB = Sequel.connect(env!("DATABASE_URL"))
 
+require_relative "../lib/nexus"
+
+# primary instruction set
+$global_context = Nexus::Context.new
+require_relative "../app"
 Nexus::Consumer.new($global_context).run

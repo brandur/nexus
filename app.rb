@@ -31,15 +31,14 @@ source :facts do
   if Time.now.min % 10 == 0 && !outside_core_hours?
     api = Excon.new("https://facts-api.herokuapp.com", ssl_verify_peer: false)
     fact = MultiJson.decode(api.get(path: "/facts/random", expects: 200).body).first
-    [{
+    [Event.new(
       content: fact["content"],
       tag: UUIDTools::UUID.random_create.to_s,
       published_at: Time.now.utc,
       url: "https://facts.brandur.org/#{fact["category"]["slug"]}/#{fact["id"]}",
       metadata: {
         category: fact["category"]["name"]
-      }
-    }]
+      }.hstore)]
   else
     []
   end
@@ -48,20 +47,19 @@ end
 source :github_heroku do
   feed = Feedzirra::Feed.fetch_and_parse(env!("GITHUB_HEROKU_URL"))
   feed.entries.map do |entry|
-    {
+    Event.new(
       title: entry.title,
       content: entry.content,
       tag: entry.id,
       url: entry.url,
-      published_at: entry.published
-    }
+      published_at: entry.published)
   end
 end
 
 source :hackernews do
   feed = Feedzirra::Feed.fetch_and_parse("http://news.ycombinator.com/rss")
   feed.entries.map do |entry|
-    {
+    Event.new(
       title: entry.title,
       tag: entry.summary.gsub(/^.*id=(\d+).*$/, '\\1'), 
       # Hacker News doesn't include a published date of any kind ...
@@ -69,8 +67,7 @@ source :hackernews do
       published_at: Time.now.utc,
       metadata: {
         comments_url: entry.summary.gsub(/^.*"(http:.*)".*$/, '\\1')
-      }
-    }
+      }.hstore)
   end
 end
 
@@ -80,7 +77,7 @@ source :twitter_brandur do
     content = tweet.text
     # expand urls, because short urls are terrible
     tweet.urls.each { |url| content.sub!(url.url, url.expanded_url) }
-    {
+    Event.new(
       content: tweet.text,
       tag: tweet.id.to_s,
       url: twitter_url(tweet.user.screen_name, tweet.id),
@@ -91,6 +88,6 @@ source :twitter_brandur do
         in_reply_to_status: tweet.in_reply_to_status_id,
         in_reply_to_user: tweet.in_reply_to_screen_name,
         user: tweet.user.screen_name
-    } }
+      }.hstore)
   end
 end

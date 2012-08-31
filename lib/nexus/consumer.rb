@@ -2,8 +2,6 @@ require "timeout"
 
 module Nexus
   class Consumer
-    include Term::ANSIColor
-
     def initialize(context)
       @context = context
     end
@@ -16,10 +14,6 @@ module Nexus
     end
 
     private
-
-    def log(opts={})
-      Slides.log(:event, opts)
-    end
 
     def process_sources
       events = []
@@ -37,25 +31,11 @@ module Nexus
       end
       events.sort_by! { |e| e[:published_at] }
       events.each do |event|
-        unless DB[:events].first(tag: event[:tag])
-          DB[:events].insert(tag: event[:tag], title: event[:title],
-            url: event[:url], content: event[:content],
-            source: event[:source], published_at: event[:published_at],
-            metadata: event[:metadata] ? event[:metadata].hstore : nil)
-          log({ title: event[:title] ? bold { cyan { event[:title] } } : nil,
-            content: event[:content] ? green { sanitize(event[:content]) } : nil,
-            url: event[:url], tag: event[:tag],
-            published_at: event[:published_at], source: event[:source] }.
-            merge(event[:metadata] ? event[:metadata] : {}))
+        unless Event.first(tag: event[:tag])
+          event.save
+          event.log
         end
       end
-    end
-
-    def sanitize(content)
-      content = content.gsub(%r{</?[^>]+?>}, '').
-        gsub(%r{\w+ \d{1,2}, \d{4}}, '').gsub(%r{\n+}, ' ').
-        gsub(%r{\s+}, ' ').strip
-      HTMLEntities.new.decode(content)
     end
   end
 end
