@@ -17,12 +17,6 @@ module Nexus
 
     private
 
-    def find_or_insert_source(name)
-      sources = DB[:sources]
-      sources.first(name: name) ||
-        sources.insert(name: name) and sources.first(name: name)
-    end
-
     def log(opts={})
       Slides.log(:event, opts)
     end
@@ -33,7 +27,7 @@ module Nexus
         begin
           Timeout.timeout(10) do
             events += source[:block].call.map do |event|
-              event[:source] = find_or_insert_source(source[:name].to_s)
+              event[:source] = source[:name].to_s
               event
             end
           end
@@ -46,12 +40,12 @@ module Nexus
         unless DB[:events].first(tag: event[:tag])
           DB[:events].insert(tag: event[:tag], title: event[:title],
             url: event[:url], content: event[:content],
-            source_id: event[:source][:id], published_at: event[:published_at],
+            source: event[:source], published_at: event[:published_at],
             metadata: event[:metadata] ? event[:metadata].hstore : nil)
           log({ title: event[:title] ? bold { cyan { event[:title] } } : nil,
             content: event[:content] ? green { sanitize(event[:content]) } : nil,
             url: event[:url], tag: event[:tag],
-            published_at: event[:published_at], source: event[:source][:name] }.
+            published_at: event[:published_at], source: event[:source] }.
             merge(event[:metadata] ? event[:metadata] : {}))
         end
       end
