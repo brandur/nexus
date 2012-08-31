@@ -88,6 +88,6 @@ source :twitter_brandur do
         in_reply_to_status: tweet.in_reply_to_status_id,
         in_reply_to_user: tweet.in_reply_to_screen_name,
         user: tweet.user.screen_name
-      }.hstore)
+      }.reject { |k,v| v == nil }.hstore)
   end
 end
