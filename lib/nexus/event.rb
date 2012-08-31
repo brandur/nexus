@@ -23,7 +23,7 @@ class Event < Sequel::Model
       tag: tag,
       published_at: published_at.iso8601,
       source: source,
-      metadata: metadata ? metadata.hash : {}
+      metadata: metadata ? metadata.to_hash : {}
     }
   end
 
