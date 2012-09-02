@@ -4,14 +4,7 @@ class Event < Sequel::Model
   include Term::ANSIColor
 
   def log
-    Slides.log(:event, {
-      title: title ? bold { cyan { title } } : nil,
-      content: content ? green { sanitize(content) } : nil,
-      url: url,
-      tag: tag,
-      published_at: published_at,
-      source: source
-    }.merge(metadata ? metadata : {}))
+    Slides.log(:event, to_json_v1)
   end
 
   def to_json_v1
