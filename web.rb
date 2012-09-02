@@ -40,7 +40,8 @@ error do
   log :error, type: env['sinatra.error'].class.name,
     message: env['sinatra.error'].message,
     backtrace: env['sinatra.error'].backtrace
-  [500, { message: "Internal server error" }.to_json]
+  [500, { "Content-Type" => "application/json" },
+    { message: "Internal server error" }.to_json]
 end
 
 #
@@ -51,7 +52,6 @@ before do
   # @todo: more research required
   headers "Access-Control-Allow-Headers" => ["Authorization"]
   headers "Access-Control-Allow-Origin" => "*"
-  headers "Content-Type" => "application/json"
 end
 
 get "/events" do
@@ -59,5 +59,6 @@ get "/events" do
   count = (params[:count] || 100).to_i
   since = (params[:since] || 0).to_i
   events = Event.order(:id.desc).filter { id >= since }.limit(count)
-  [200, MultiJson.encode(events.map(&:to_json_v1), pretty: curl?)]
+  [200, { "Content-Type" => "application/json" },
+    MultiJson.encode(events.map(&:to_json_v1), pretty: curl?)]
 end
