@@ -51,6 +51,7 @@ before do
   # @todo: more research required
   headers "Access-Control-Allow-Headers" => ["Authorization"]
   headers "Access-Control-Allow-Origin" => "*"
+  headers "Content-Type" => "application/json"
 end
 
 get "/events" do
