@@ -19,7 +19,7 @@ helpers do
   def authorized!
     unless authorized?
       log :unauthorized
-      throw(:halt, [401, { message: "Not authorized" }.to_json])
+      throw(:halt, [401, to_json({ message: "Not authorized" })])
     end
   end
 
@@ -29,6 +29,10 @@ helpers do
 
   def log(action, attrs = {})
     Slides.log(action, attrs.merge!(id: env["REQUEST_ID"]))
+  end
+
+  def to_json(obj)
+    MultiJson.encode(obj, pretty: curl?)]
   end
 end
 
@@ -40,8 +44,7 @@ error do
   log :error, type: env['sinatra.error'].class.name,
     message: env['sinatra.error'].message,
     backtrace: env['sinatra.error'].backtrace
-  [500, { "Content-Type" => "application/json" },
-    { message: "Internal server error" }.to_json]
+  [500, to_json({ message: "Internal server error" })]
 end
 
 #
@@ -59,6 +62,5 @@ get "/events" do
   count = (params[:count] || 100).to_i
   since = (params[:since] || 0).to_i
   events = Event.order(:id.desc).filter { id >= since }.limit(count)
-  [200, { "Content-Type" => "application/json" },
-    MultiJson.encode(events.map(&:to_json_v1), pretty: curl?)]
+  [200, to_json(events.map(&:to_json_v1))]
 end
