@@ -32,7 +32,7 @@ helpers do
   end
 
   def to_json(obj)
-    MultiJson.encode(obj, pretty: curl?)]
+    MultiJson.encode(obj, pretty: curl?)
   end
 end
 
