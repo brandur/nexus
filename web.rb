@@ -28,7 +28,7 @@ helpers do
   end
 
   def log(action, attrs = {})
-    Slides.log(action, attrs.merge!(id: env["REQUEST_ID"]))
+    Slides.log(action, attrs.merge!(id: env["REQUEST_IDS"]))
   end
 
   def to_json(obj)
