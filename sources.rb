@@ -52,7 +52,10 @@ source :github do
       content: entry.content,
       tag: entry.id,
       url: entry.url,
-      published_at: entry.published)
+      published_at: entry.published,
+      metadata: {
+        user: entry.author,
+      })
   end
 end
 
