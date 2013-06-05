@@ -66,7 +66,7 @@ source :hackernews do
       url: entry.url,
       published_at: Time.now.utc,
       metadata: {
-        comments_url: entry.summary.gsub(/^.*"(http:.*)".*$/, '\\1')
+        comments_url: entry.summary.gsub(/^.*"(https?:.*)".*$/, '\\1')
       }.hstore)
   end
 end
