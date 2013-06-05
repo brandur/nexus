@@ -53,7 +53,7 @@ end
 
 before do
   # @todo: more research required
-  headers "Access-Control-Allow-Headers" => ["Authorization"]
+  headers "Access-Control-Allow-Headers" => "Authorization"
   headers "Access-Control-Allow-Origin" => "*"
 end
 
