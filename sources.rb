@@ -35,7 +35,7 @@ source :facts do
       content: fact["content"],
       tag: UUIDTools::UUID.random_create.to_s,
       published_at: Time.now.utc,
-      url: "https://facts.brandur.org/#{fact["category"]["slug"]}/#{fact["id"]}",
+      url: "http://facts.brandur.org/#{fact["category"]["slug"]}/#{fact["id"]}",
       metadata: {
         category: fact["category"]["name"]
       }.hstore)]
