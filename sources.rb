@@ -55,7 +55,7 @@ source :github do
       published_at: entry.published,
       metadata: {
         user: entry.author,
-      })
+      }.hstore)
   end
 end
 
