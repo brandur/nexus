@@ -62,5 +62,16 @@ get "/events" do
   count = (params[:count] || 100).to_i
   since = (params[:since] || 0).to_i
   events = Event.order(:id.desc).filter { id >= since }.limit(count)
-  [200, to_json(events.map(&:to_json_v1))]
+  if params[:stream] == "true"
+    stream do |out|
+      loop do
+        since = events.first.id if events.count > 0
+        out << to_json(events.map(&:to_json_v1))
+        sleep(5)
+        events = Event.order(:id.desc).filter { id >= since }
+      end
+    end
+  else
+    to_json(events.map(&:to_json_v1))
+  end
 end
